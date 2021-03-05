@@ -24,7 +24,6 @@ for i in team_name:
 for i in range (len(team_name)):
     clubs[team[i]]=home_url+link[i]['href']
 sorted(clubs)
-print(clubs)
 count=1
 for y in clubs:
     print(count,':',y)
@@ -33,10 +32,23 @@ list_link=list(clubs.values())
 a=int(input("Choose the corresponding number of the team you want to get stats of:"))
 stats_url=list_link[a-1]
 print(stats_url)
-'''
-m=requests.get(stats_url)
+m=session.get(stats_url)
 ac=BeautifulSoup(m.text,features="html.parser")
-match_url="https://www.premierleague.com/match/59146"
-n=requests.get(match_url)
-bc=BeautifulSoup(n.text,features="html.parser")
-print(bc)'''
+result=ac.select('div.scoreline')
+result1=[]
+for i in result:
+    result1.append(i.a)
+
+stats=[]
+for i in range(11,16):
+    if i>=5:
+        stats.append(home_url+result1[i]['href'])
+print(stats)
+for i in range (len(stats)):
+    cur_stats=stats[i]
+    # p=session.get(cur_stats)
+    # cr = BeautifulSoup(p.text, features="html.parser")
+    # stat_num=cr.find_all('section',{"class":"stat-group stat-box rw100 lh14e ft-data"})
+    # num_pos=stat_num[i].find_all("td", string="Possession")
+    # print(num_pos)
+    # print(cur_stats, stat_num)
