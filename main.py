@@ -7,6 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from time import sleep
 from datetime import datetime
+import pandas as pd
+import matplotlib.pyplot as plt
 home_url="https://footystats.org"
 clubs_url="https://footystats.org/england/premier-league"
 session = HTMLSession()
@@ -44,11 +46,66 @@ for i in range(11,16):
     if i>=5:
         stats.append(home_url+result1[i]['href'])
 print(stats)
+possession=[]
+shots=[]
+corners=[]
+offside=[]
+fouls=[]
+opp_team=[]
 for i in range (len(stats)):
     cur_stats=stats[i]
-    # p=session.get(cur_stats)
-    # cr = BeautifulSoup(p.text, features="html.parser")
-    # stat_num=cr.find_all('section',{"class":"stat-group stat-box rw100 lh14e ft-data"})
-    # num_pos=stat_num[i].find_all("td", string="Possession")
-    # print(num_pos)
-    # print(cur_stats, stat_num)
+    tab_num=pd.read_html(cur_stats)
+    tab_num=tab_num[0]
+    s=list(clubs.keys())[a-1]
+    s=s.replace(" FC", "")
+    print(tab_num)
+    stats_tab=tab_num[[s]]
+    pos=(list(stats_tab.iloc[0]))
+    shots_list=(list(stats_tab.iloc[1]))
+    corners_list=(list(stats_tab.iloc[3]))
+    offsides_list=(list(stats_tab.iloc[5]))
+    fouls_list=(list(stats_tab.iloc[6]))
+    opp=list(tab_num.columns.values)
+    for j in opp:
+        if j!=s:
+            if j!="Data":
+                opp_team.append(j)
+
+
+    for j in shots_list:
+        j=int(j)
+        shots.append(j)
+
+    for j in corners_list:
+        j = int(j)
+        corners.append(j)
+
+    for j in offsides_list:
+        j = int(j)
+        offside.append(j)
+
+    for j in fouls_list:
+        j = int(j)
+        fouls.append(j)
+
+    for j in pos:
+        j=j.replace("%","")
+        j=int(j)
+        possession.append(j)
+    print(possession)
+    print(stats_tab)
+print(possession)
+print(shots)
+print(corners)
+print(opp_team)
+plt.plot(opp_team,possession)
+plt.figure()
+plt.plot(opp_team,shots)
+plt.figure()
+plt.plot(opp_team,corners)
+plt.figure()
+plt.plot(opp_team,offside)
+plt.figure()
+plt.plot(opp_team,fouls)
+plt.figure()
+plt.show()
